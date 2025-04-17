@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { ProductContext } from "../context/ProductContext";
-import carritoLogo from "../assets/logos/logo_carrito.png"; // Asegúrate que la ruta sea correcta
+import carritoLogo from "/assets/logos/logo_carrito.png"; // Asegúrate que la ruta sea correcta
 
 const CATEGORIAS = [
   "Alimentos",
