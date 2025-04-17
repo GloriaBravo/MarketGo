@@ -1,17 +1,12 @@
 import React, { useContext } from "react";
 import { ProductContext } from "../context/ProductContext";
 
-// Importar logos de tiendas
-import d1Logo from "../assets/logos/d1.png";
-import araLogo from "../assets/logos/ara.png";
-import exitoLogo from "../assets/logos/exito.png";
-import interLogo from "../assets/logos/inter.png";
-
+// Rutas correctas para las imágenes de las tiendas
 const storeLogos = {
-  d1: d1Logo,
-  ara: araLogo,
-  exito: exitoLogo,
-  inter: interLogo,
+  d1: "/assets/logos/D1.png",  // Usar ruta absoluta desde la raíz
+  ara: "/assets/logos/Ara.png",
+  exito: "/assets/logos/Exito.png",
+  inter: "/assets/logos/Inter.png",
 };
 
 const categoriaIconos = {
@@ -25,22 +20,6 @@ const categoriaIconos = {
 
 const ProductList = () => {
   const { products, total, removeProduct } = useContext(ProductContext);
-
-  // Agrupar por mes y categoría
-  const groupedByMonthCategory = products.reduce((acc, p) => {
-    const mes = p.fecha ? new Date(p.fecha).getMonth() : "Sin fecha"; // Extraemos solo el mes
-    const totalMes = (p.precio * p.cantidad).toFixed(2);
-    const categoria = p.categoria || "Otros";
-
-    if (!acc[mes]) {
-      acc[mes] = {};
-    }
-
-    acc[mes][categoria] = acc[mes][categoria] || 0;
-    acc[mes][categoria] += parseFloat(totalMes);
-
-    return acc;
-  }, {});
 
   // Función para renderizar productos
   const renderProduct = (p) => {
@@ -78,9 +57,7 @@ const ProductList = () => {
             <br />
             {p.tienda && <span>🏬 {p.tienda}</span>}
             {p.categoria && (
-              <span>
-                {" "} | 🏷️ {p.categoria}
-              </span>
+              <span> | 🏷️ {p.categoria}</span>
             )}
           </div>
           <button onClick={() => removeProduct(p.id)}>🗑️</button>
@@ -94,34 +71,6 @@ const ProductList = () => {
       <h3>Productos Agregados</h3>
       <h4>Total: ${total.toFixed(2)}</h4>
 
-      {/* Cuadro de comparación por mes y categoría */}
-      <h3>📊 Comparación por Mes y Categoría</h3>
-      <div>
-        {Object.entries(groupedByMonthCategory).map(([mes, categories]) => {
-          return (
-            <div key={mes}>
-              <h4>{`Mes ${parseInt(mes) + 1}`}</h4>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Categoría</th>
-                    <th>Total Gasto</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {Object.entries(categories).map(([categoria, total]) => (
-                    <tr key={categoria}>
-                      <td>{categoriaIconos[categoria] || "🏷️"} {categoria}</td>
-                      <td>${total.toFixed(2)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          );
-        })}
-      </div>
-
       {/* Lista de productos */}
       {products.length === 0 ? (
         <p>No hay productos agregados aún.</p>
@@ -133,3 +82,4 @@ const ProductList = () => {
 };
 
 export default ProductList;
+

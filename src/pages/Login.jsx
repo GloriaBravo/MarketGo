@@ -2,7 +2,7 @@ import React from "react";
 import { auth, googleProvider, githubProvider } from "../firebase/firebaseConfig";
 import { signInWithPopup } from "firebase/auth";
 import "../styles/Login.css";
-import carritoLogo from "../assets/logos/logo_carrito.png"; // 👈 Importamos el logo
+import carritoLogo from "/assets/logos/logo_carrito.png"; // 👈 Importamos el logo
 
 function Login() {
   const handleLogin = async (provider) => {

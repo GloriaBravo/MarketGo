@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { ProductContext } from "../context/ProductContext";
-import carritoLogo from "../assets/logos/logo_carrito.png";
+import carritoLogo from "../assets/logos/logo_carrito.png"; // Asegúrate que la ruta sea correcta
 
 const CATEGORIAS = [
   "Alimentos",
@@ -44,6 +44,7 @@ const ProductForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    // Validaciones de campos
     if (!form.nombre || form.precio <= 0 || !form.tienda || !form.categoria) {
       return alert("Por favor completa todos los campos obligatorios");
     }
@@ -57,6 +58,7 @@ const ProductForm = () => {
         ? form.precio * parseFloat(form.peso)
         : parseFloat(form.precio);
 
+    // Llamada al contexto para agregar el producto
     const success = addProduct({
       nombre: form.nombre,
       precio: precioFinal,
@@ -70,6 +72,7 @@ const ProductForm = () => {
 
     if (!success) return alert("Este producto ya está agregado");
 
+    // Limpiar el formulario después de agregar el producto
     setForm({
       nombre: "",
       precio: 0,
@@ -189,4 +192,3 @@ const ProductForm = () => {
 };
 
 export default ProductForm;
-
