@@ -1,11 +1,7 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import { ProductContext } from "../context/ProductContext";
-import { Pie } from "react-chartjs-2";
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement } from "chart.js";
 
-// Registrar los componentes necesarios para Chart.js
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
-
+// Importar logos de tiendas
 import d1Logo from "../assets/logos/d1.png";
 import araLogo from "../assets/logos/ara.png";
 import exitoLogo from "../assets/logos/exito.png";
@@ -30,44 +26,23 @@ const categoriaIconos = {
 const ProductList = () => {
   const { products, total, removeProduct } = useContext(ProductContext);
 
-  // Agrupar por mes
-  const groupedByMonth = products.reduce((acc, p) => {
+  // Agrupar por mes y categoría
+  const groupedByMonthCategory = products.reduce((acc, p) => {
     const mes = p.fecha ? new Date(p.fecha).getMonth() : "Sin fecha"; // Extraemos solo el mes
     const totalMes = (p.precio * p.cantidad).toFixed(2);
-    acc[mes] = acc[mes] || [];
-    acc[mes].push(totalMes);
+    const categoria = p.categoria || "Otros";
+
+    if (!acc[mes]) {
+      acc[mes] = {};
+    }
+
+    acc[mes][categoria] = acc[mes][categoria] || 0;
+    acc[mes][categoria] += parseFloat(totalMes);
+
     return acc;
   }, {});
 
-  // Crear gráfico de torta (Pie) con los datos de los gastos por mes
-  const data = {
-    labels: Object.keys(groupedByMonth).map((month) => `Mes ${parseInt(month) + 1}`), // Mes 1, Mes 2...
-    datasets: [
-      {
-        label: "Gasto Total por Mes",
-        data: Object.values(groupedByMonth).map((monthData) =>
-          monthData.reduce((acc, current) => acc + parseFloat(current), 0)
-        ),
-        backgroundColor: [
-          "rgba(75, 192, 192, 0.5)",
-          "rgba(255, 99, 132, 0.5)",
-          "rgba(255, 159, 64, 0.5)",
-          "rgba(153, 102, 255, 0.5)",
-          "rgba(255, 205, 86, 0.5)",
-        ], // Colores para cada mes
-        borderColor: [
-          "rgba(75, 192, 192, 1)",
-          "rgba(255, 99, 132, 1)",
-          "rgba(255, 159, 64, 1)",
-          "rgba(153, 102, 255, 1)",
-          "rgba(255, 205, 86, 1)",
-        ], // Borde de cada sección
-        borderWidth: 1,
-      },
-    ],
-  };
-
-  // Función de renderizado de productos
+  // Función para renderizar productos
   const renderProduct = (p) => {
     const logo = storeLogos[p.tienda?.toLowerCase()];
     const fechaFormateada = p.fecha ? new Date(p.fecha).toLocaleDateString() : "Sin fecha";
@@ -119,9 +94,33 @@ const ProductList = () => {
       <h3>Productos Agregados</h3>
       <h4>Total: ${total.toFixed(2)}</h4>
 
-      {/* Gráfico de torta (Pie) de gasto mensual */}
-      <h3>📊 Gasto por Mes</h3>
-      <Pie data={data} options={{ responsive: true }} />
+      {/* Cuadro de comparación por mes y categoría */}
+      <h3>📊 Comparación por Mes y Categoría</h3>
+      <div>
+        {Object.entries(groupedByMonthCategory).map(([mes, categories]) => {
+          return (
+            <div key={mes}>
+              <h4>{`Mes ${parseInt(mes) + 1}`}</h4>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Categoría</th>
+                    <th>Total Gasto</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {Object.entries(categories).map(([categoria, total]) => (
+                    <tr key={categoria}>
+                      <td>{categoriaIconos[categoria] || "🏷️"} {categoria}</td>
+                      <td>${total.toFixed(2)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          );
+        })}
+      </div>
 
       {/* Lista de productos */}
       {products.length === 0 ? (
@@ -134,4 +133,3 @@ const ProductList = () => {
 };
 
 export default ProductList;
-
